@@ -59,8 +59,11 @@ def collect(request):
     }
     :return:
     """
-    asset_info = json.loads(request.body)
     if request.method == "POST":
+        try:
+            asset_info = json.loads(request.body or b"{}")
+        except Exception:
+            return HttpResponse('invalid json', status=400)
         hostname = asset_info.get('hostname')
         ip = asset_info.get('ip')
         disk = asset_info.get('disk')
