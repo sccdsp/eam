@@ -26,3 +26,10 @@ def edit(request, pk):
     else:
         form = HostForm(instance=host)
     return render(request, 'edit.html', {'form': form, 'host': host})
+
+def delete(request, pk):
+    host = get_object_or_404(Host, pk=pk)
+    if request.method == "POST":
+        host.delete()
+        return redirect('index')
+    return redirect('index')
