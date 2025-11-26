@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content-wrapper">
+  <section class="content-header">
+    <h1>Agent 列表</h1>
+    <ol class="breadcrumb">
+      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+      <li class="active">Agents</li>
+    </ol>
+  </section>
+  <section class="content">
+    <div class="box">
+      <div class="box-header with-border">
+        <h3 class="box-title">已注册 Agents</h3>
+        <div class="box-tools pull-right">
+          <a href="{% url 'agent_add' %}" class="btn btn-primary btn-sm">新建 Agent</a>
+        </div>
+      </div>
+      <div class="box-body">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>名称</th>
+              <th>版本</th>
+              <th>状态</th>
+              <th>主机</th>
+              <th>最近心跳</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for agent in agents %}
+            <tr>
+              <td>{{ agent.name }}</td>
+              <td>{{ agent.version }}</td>
+              <td>{{ agent.status }}</td>
+              <td>{{ agent.host.hostname }}</td>
+              <td>{{ agent.last_heartbeat }}</td>
+              <td>
+                <a class="btn btn-xs btn-primary" href="{% url 'agent_edit' agent.id %}">编辑</a>
+                <form action="{% url 'agent_delete' agent.id %}" method="post" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('确定删除该 Agent？');">删除</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="box-footer">Footer</div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
