@@ -33,8 +33,9 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="/static/index.html"><i class="fa fa-circle-o"></i> 资产列表</a></li>
-            <li><a href="/static/index2.html"><i class="fa fa-circle-o"></i> 资产录入</a></li>
+            <li><a href="{% url 'index' %}"><i class="fa fa-circle-o"></i> 资产列表</a></li>
+            <li><a href="{% url 'add' %}"><i class="fa fa-circle-o"></i> 资产录入</a></li>
+            <li><a href="{% url 'admin:index' %}"><i class="fa fa-circle-o"></i> 后台管理</a></li>
           </ul>
         </li>
         <li class="treeview">
