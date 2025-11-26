@@ -39,6 +39,7 @@
               <th>内存</th>
               <th>cpu</th>
               <th>描述</th>
+              <th>操作</th>
             </tr>
             {% for host in host_list %}
             <tr>
@@ -48,6 +49,7 @@
               <td>{{ host.mem }}</td>
               <td>{{ host.cpu }}</td>
               <td>{{ host.desc }}</td>
+              <td><a class="btn btn-xs btn-primary" href="{% url 'edit' host.id %}">编辑</a></td>
             </tr>
             {% endfor %}
           </table>
