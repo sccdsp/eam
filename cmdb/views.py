@@ -1,13 +1,18 @@
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 import json
 from django.views.decorators.csrf import csrf_exempt
 from .models import Host, Agent
 from .forms import HostForm, AgentForm
 # Create your views here.
+@login_required
 def index(request):
     host_list = Host.objects.all()
     return render(request, 'main.html', {'host_list': host_list})
 
+@login_required
 def add(request):
     if request.method == "POST":
         form = HostForm(request.POST)
@@ -18,6 +23,7 @@ def add(request):
         form = HostForm()
     return render(request, 'add.html', {'form': form})
 
+@login_required
 def edit(request, pk):
     host = get_object_or_404(Host, pk=pk)
     if request.method == "POST":
@@ -29,6 +35,7 @@ def edit(request, pk):
         form = HostForm(instance=host)
     return render(request, 'edit.html', {'form': form, 'host': host})
 
+@login_required
 def delete(request, pk):
     host = get_object_or_404(Host, pk=pk)
     if request.method == "POST":
@@ -73,10 +80,12 @@ def collect(request):
         host.save()
     return HttpResponse('success')
 
+@login_required
 def agent_list(request):
     agents = Agent.objects.select_related('host').all()
     return render(request, 'agent_list.html', {'agents': agents})
 
+@login_required
 def agent_add(request):
     if request.method == "POST":
         form = AgentForm(request.POST)
@@ -87,6 +96,7 @@ def agent_add(request):
         form = AgentForm()
     return render(request, 'agent_edit.html', {'form': form})
 
+@login_required
 def agent_edit(request, pk):
     agent = get_object_or_404(Agent, pk=pk)
     if request.method == "POST":
@@ -98,6 +108,7 @@ def agent_edit(request, pk):
         form = AgentForm(instance=agent)
     return render(request, 'agent_edit.html', {'form': form, 'agent': agent})
 
+@login_required
 def agent_delete(request, pk):
     agent = get_object_or_404(Agent, pk=pk)
     if request.method == "POST":
@@ -105,3 +116,28 @@ def agent_delete(request, pk):
         return redirect('agent_list')
     return redirect('agent_list')
 
+def login(request):
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            auth_login(request, user)
+            return redirect('index')
+    else:
+        form = AuthenticationForm(request)
+    return render(request, 'login.html', {'form': form})
+
+def register(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            auth_login(request, user)
+            return redirect('index')
+    else:
+        form = UserCreationForm()
+    return render(request, 'register.html', {'form': form})
+
+def logout(request):
+    auth_logout(request)
+    return redirect('login')
